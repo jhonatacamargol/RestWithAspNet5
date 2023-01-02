@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using RestWithAspNet.Model;
+using RestWithAspNet.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,102 +10,52 @@ using System.Threading.Tasks;
 namespace RestWithAspNet.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
-    public class CalculatorController : ControllerBase
+    [Route("api/[controller]")]
+    public class PersonController : ControllerBase
     {
         
-        private readonly ILogger<CalculatorController> _logger;
+        private readonly ILogger<PersonController> _logger;
+        private IPersonService _personService;
 
-        public CalculatorController(ILogger<CalculatorController> logger)
+        public PersonController(ILogger<PersonController> logger, IPersonService personService)
         {
             _logger = logger;
+            _personService = personService;
+        }
+        [HttpGet]
+        public IActionResult Get()
+        {
+            return Ok(_personService.FindAll());
         }
 
-        [HttpGet("soma/{firstNumber}/{secondNumber}")]
-        public IActionResult Soma(string firstNumber, string secondNumber)
+        [HttpGet("{id}")]
+        public IActionResult Get(long id)
         {
-           /* if (IsNumeric(firstNumber) && IsNumeric(secondNumber))
-            {
-                var sum = ConvertToDecimal(firstNumber) + ConvertToDecimal(secondNumber);
-                return Ok(sum.ToString());
-            }*/
-            return BadRequest("Invalid Imput");
+            var person = _personService.FindBayID(id);
+            if (person == null) return NotFound();
+            return Ok(person);
         }
 
-        /*[HttpGet("subtrai/{firstNumber}/{secondNumber}")]
-        public IActionResult Subtrai(string firstNumber, string secondNumber)
+        [HttpPost]
+        public IActionResult Post([FromBody] Person person)
         {
-            if (IsNumeric(firstNumber) && IsNumeric(secondNumber))
-            {
-                var sum = ConvertToDecimal(firstNumber) - ConvertToDecimal(secondNumber);
-                return Ok(sum.ToString());
-            }
-            return BadRequest("Invalid Imput");
+            if (person == null) return BadRequest();
+            return Ok(_personService.Create(person));
+        }
+        
+        [HttpPut]
+        public IActionResult Put([FromBody] Person person)
+        {
+            if (person == null) return BadRequest();
+            return Ok(_personService.Updade(person));
         }
 
-        [HttpGet("multiplica/{firstNumber}/{secondNumber}")]
-        public IActionResult Multiplica(string firstNumber, string secondNumber)
+        [HttpDelete("{id}")]
+        public IActionResult Delete(long id)
         {
-            if (IsNumeric(firstNumber) && IsNumeric(secondNumber))
-            {
-                var sum = ConvertToDecimal(firstNumber) * ConvertToDecimal(secondNumber);
-                return Ok(sum.ToString());
-            }
-            return BadRequest("Invalid Imput");
+            _personService.Delete(id);
+            return NoContent();
         }
 
-        [HttpGet("divide/{firstNumber}/{secondNumber}")]
-        public IActionResult Divide(string firstNumber, string secondNumber)
-        {
-            if (IsNumeric(firstNumber) && IsNumeric(secondNumber))
-            {
-                var sum = ConvertToDecimal(firstNumber) / ConvertToDecimal(secondNumber);
-                return Ok(sum.ToString());
-            }
-            return BadRequest("Invalid Imput");
-        }
-
-        [HttpGet("media/{firstNumber}/{secondNumber}")]
-        public IActionResult Media(string firstNumber, string secondNumber)
-        {
-            if (IsNumeric(firstNumber) && IsNumeric(secondNumber))
-            {
-                var sum = ConvertToDecimal(firstNumber) + ConvertToDecimal(secondNumber) /2;
-                return Ok(sum.ToString());
-            }
-            return BadRequest("Invalid Imput");
-        }
-
-        [HttpGet("raiz quadrada/{firstNumber}")]
-        public IActionResult RaizQuadrada(string firstNumber)
-        {
-            if (IsNumeric(firstNumber))
-            {
-                var squareroot = Math.Sqrt((double)ConvertToDecimal(firstNumber));
-                return Ok(squareroot.ToString());
-            }
-            return BadRequest("Invalid Imput");
-        }
-        private bool IsNumeric(string strNumber)
-        {
-            double number;
-            bool isNumber = double.TryParse(strNumber, 
-                System.Globalization.NumberStyles.Any, 
-                System.Globalization.NumberFormatInfo.InvariantInfo, 
-                out number);
-            return isNumber;
-        }
-
-        private decimal ConvertToDecimal(string strNumber)
-        {
-            decimal decimalValue;
-            if(decimal.TryParse(strNumber, out decimalValue))
-            {
-                return decimalValue;
-            }
-            return 0;*/
-        }
-
-       
     }
 }
