@@ -1,17 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
-using RestWithAspNet.Model;
+﻿using RestWithAspNet.Model;
 using RestWithAspNet.Model.Context;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RestWithAspNet.Services.Implementations
+namespace RestWithAspNet.Repository.Implementations
 {
-    public class PersonServiceImplementation : IPersonService
+    public class PersonRepositoryImplementation : IPersonRepository
     {
         private MySqlContext _Context;
 
-        public PersonServiceImplementation(MySqlContext context) 
+        public PersonRepositoryImplementation(MySqlContext context) 
         { 
             _Context = context;
         }
@@ -73,7 +72,7 @@ namespace RestWithAspNet.Services.Implementations
                 }
             } 
         }
-        private bool Exists(long id)
+        public bool Exists(long id)
         {
             return _Context.Persons.Any(p=> p.Id.Equals(id));
         }

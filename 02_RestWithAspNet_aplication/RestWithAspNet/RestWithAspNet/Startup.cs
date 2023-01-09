@@ -1,19 +1,14 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using RestWithAspNet.Model.Context;
-using RestWithAspNet.Services;
-using RestWithAspNet.Services.Implementations;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using RestWithAspNet.Business;
+using RestWithAspNet.Business.Implementations;
+using RestWithAspNet.Repository;
+using RestWithAspNet.Repository.Implementations;
 
 namespace RestWithAspNet
 {
@@ -35,8 +30,12 @@ namespace RestWithAspNet
             var connection = Configuration["MySQLConnection:MySQLConnectionString"];
             services.AddDbContext<MySqlContext>(optionsAction => optionsAction.UseMySql(connection, ServerVersion.AutoDetect(connection), null));
 
+            //versioning API
+            services.AddApiVersioning();
+
             //Dependency Injection
-            services.AddScoped<IPersonService, PersonServiceImplementation>();
+            services.AddScoped<IPersonBusiness, PersonBusinessImplementation>();
+            services.AddScoped<IPersonRepository, PersonRepositoryImplementation>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
