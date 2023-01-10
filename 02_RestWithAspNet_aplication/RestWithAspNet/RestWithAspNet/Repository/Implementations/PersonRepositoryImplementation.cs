@@ -39,7 +39,7 @@ namespace RestWithAspNet.Repository.Implementations
         }
         public Person Updade(Person person)
         {
-            if (!Exists(person.Id)) return new Person();
+            if (!Exists(person.Id)) return null;
            
             var result = _Context.Persons.FirstOrDefault(p => p.Id.Equals(person.Id));
             if (result != null)
